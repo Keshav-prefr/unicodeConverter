@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unicode Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="text"] {
+            width: calc(100% - 2em);
+            padding: 1em;
+            margin: 1em 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 1em 2em;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 1.5em;
+            padding: 1em;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            word-wrap: break-word;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Emoji Unicode Converter</h1>
+        <p>Enter text or emojis below to get the correct Unicode escape sequence for push notifications.</p>
+        <input type="text" id="inputString" placeholder="e.g., Loan 😃 or ❤️">
+        <button onclick="convertString()">Convert</button>
+        <div id="result">
+            <p><strong>Result:</strong></p>
+            <p id="output"></p>
+        </div>
+    </div>
+
+    <script>
+        function getUnicodeEscape(str) {
+            let result = '';
+            for (let i = 0; i < str.length; i++) {
+                let codepoint = str.codePointAt(i);
+                if (codepoint <= 0xFFFF) {
+                    // BMP characters
+                    result += `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
+                } else {
+                    // Non-BMP characters, calculate surrogate pair
+                    codepoint -= 0x10000;
+                    let highSurrogate = 0xD800 + (codepoint >> 10);
+                    let lowSurrogate = 0xDC00 + (codepoint & 0x3FF);
+                    result += `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
+                    i++; // Skip the low surrogate's code unit
+                }
+            }
+            return result;
+        }
+
+        function convertString() {
+            const inputString = document.getElementById('inputString').value;
+            const outputElement = document.getElementById('output');
+            
+            if (inputString.trim() === '') {
+                outputElement.textContent = "Please enter some text or emojis.";
+                return;
+            }
+
+            const converted = getUnicodeEscape(inputString);
+            outputElement.textContent = converted;
+        }
+    </script>
+
+</body>
+</html>
