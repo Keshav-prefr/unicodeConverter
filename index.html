@@ -3,91 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unicode Converter</title>
+    <title>Modern Unicode Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4A90E2; /* Blue */
+            --secondary-color: #50E3C2; /* Teal */
+            --text-color: #333;
+            --light-text-color: #666;
+            --background-color: #F8F9FA;
+            --card-background: #FFFFFF;
+            --border-color: #E0E0E0;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --hover-shadow-color: rgba(0, 0, 0, 0.15);
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            background-color: #f0f2f5;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease;
         }
+
         .container {
-            background-color: white;
-            padding: 2em;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: var(--card-background);
+            padding: 2.5em;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow-color);
             text-align: center;
             width: 90%;
-            max-width: 600px;
+            max-width: 650px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px var(--hover-shadow-color);
+        }
+
         h1 {
-            color: #333;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 0.5em;
+            font-size: 2.2em;
         }
+
+        p {
+            color: var(--light-text-color);
+            margin-bottom: 1.5em;
+            font-weight: 300;
+        }
+
+        .input-group {
+            margin-bottom: 1.5em;
+        }
+
         input[type="text"] {
-            width: calc(100% - 2em);
-            padding: 1em;
-            margin: 1em 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: calc(100% - 2.5em); /* Account for padding */
+            padding: 1em 1.2em;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             font-size: 1em;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none;
         }
+
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
         button {
-            background-color: #007bff;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 1em 2em;
-            border-radius: 4px;
+            padding: 1em 2.5em;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 1em;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: #3A7BBF; /* Darker primary */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
         }
-        #result {
-            margin-top: 1.5em;
-            padding: 1em;
-            background-color: #e9ecef;
-            border-radius: 4px;
-            word-wrap: break-word;
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(74, 144, 226, 0.2);
+        }
+
+        .result-area {
+            margin-top: 2em;
+            padding: 1.5em;
+            background-color: #F0F4F7; /* Lighter background for result */
+            border-radius: 8px;
             text-align: left;
+            border: 1px dashed var(--border-color);
+            word-break: break-all; /* Ensures long strings wrap */
+            min-height: 3em; /* Give it some initial height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .result-area strong {
+            color: var(--primary-color);
+            margin-bottom: 0.5em;
+            display: block;
+        }
+
+        #output {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+            color: var(--text-color);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .container {
+                padding: 1.5em;
+            }
+            button {
+                width: 100%;
+                padding: 1em;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Emoji Unicode Converter</h1>
-        <p>Enter text or emojis below to get the correct Unicode escape sequence for push notifications.</p>
-        <input type="text" id="inputString" placeholder="e.g., Loan 😃 or ❤️">
-        <button onclick="convertString()">Convert</button>
-        <div id="result">
-            <p><strong>Result:</strong></p>
-            <p id="output"></p>
+        <h1>✨ Modern Unicode Converter ✨</h1>
+        <p>Effortlessly convert text, emojis, or Unicode code points into their correct escape sequences for your applications.</p>
+        
+        <div class="input-group">
+            <input type="text" id="inputString" placeholder="e.g., Hello World! 😄 or U+1F601">
+        </div>
+        
+        <button onclick="convertString()">Convert to Escape Sequence</button>
+        
+        <div class="result-area">
+            <strong>Conversion Result:</strong>
+            <p id="output">Your converted string will appear here.</p>
         </div>
     </div>
 
     <script>
         function getUnicodeEscape(str) {
-            let result = '';
-            for (let i = 0; i < str.length; i++) {
-                let codepoint = str.codePointAt(i);
+            // Check if the input is a Unicode code point string (e.g., "U+1F601")
+            const codePointMatch = str.trim().match(/^U\+([0-9a-fA-F]+)$/);
+
+            if (codePointMatch) {
+                let codepoint = parseInt(codePointMatch[1], 16);
+
+                if (isNaN(codepoint)) {
+                    return "Error: Invalid Unicode code point format.";
+                }
+
+                if (codepoint < 0 || codepoint > 0x10FFFF) {
+                    return "Error: Code point out of valid Unicode range (U+0 to U+10FFFF).";
+                }
+
                 if (codepoint <= 0xFFFF) {
                     // BMP characters
-                    result += `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
+                    return `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
                 } else {
                     // Non-BMP characters, calculate surrogate pair
                     codepoint -= 0x10000;
                     let highSurrogate = 0xD800 + (codepoint >> 10);
                     let lowSurrogate = 0xDC00 + (codepoint & 0x3FF);
-                    result += `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
-                    i++; // Skip the low surrogate's code unit
+                    return `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
                 }
+            } else {
+                // Original logic: treat the input as a string of characters/emojis
+                let result = '';
+                for (let i = 0; i < str.length; i++) {
+                    let codepoint = str.codePointAt(i);
+                    // Handle potential invalid characters or surrogate halves
+                    if (codepoint === undefined || isNaN(codepoint)) {
+                        // This case should ideally not happen with codePointAt, but good for robustness
+                        result += `\\uFFFD`; // Replacement character
+                        continue;
+                    }
+
+                    if (codepoint <= 0xFFFF) {
+                        result += `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
+                    } else {
+                        codepoint -= 0x10000;
+                        let highSurrogate = 0xD800 + (codepoint >> 10);
+                        let lowSurrogate = 0xDC00 + (codepoint & 0x3FF);
+                        result += `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
+                        // Increment 'i' to skip the second half of the surrogate pair
+                        // 'codePointAt(i)' already consumes the full code point
+                        // so this 'i++' is to correctly advance the loop for the next actual character.
+                        // The loop itself handles 'i++' on its own; this is for the case when 'i' is already
+                        // at the start of a surrogate pair, and we processed both.
+                        // However, the `for (let i = 0; i < str.length; i++)` loop
+                        // coupled with `str.codePointAt(i)` which correctly advances `i`
+                        // means this `i++` here is actually problematic and double increments
+                        // for non-BMP chars. Let's simplify and rely on `codePointAt` for correct iteration.
+                        // The loop needs to advance by `char.length` or specifically for `codePointAt`
+                        // we can rely on `str.length`. Let's use `for (const char of str)` for simpler emoji iteration.
+                    }
+                }
+                return result;
             }
-            return result;
+        }
+
+        // Refined getUnicodeEscape to correctly iterate over potentially multi-code-unit characters
+        function getUnicodeEscape(str) {
+            const codePointMatch = str.trim().match(/^U\+([0-9a-fA-F]+)$/);
+
+            if (codePointMatch) {
+                let codepoint = parseInt(codePointMatch[1], 16);
+                if (isNaN(codepoint) || codepoint < 0 || codepoint > 0x10FFFF) {
+                    return "Error: Invalid or out-of-range Unicode code point.";
+                }
+
+                if (codepoint <= 0xFFFF) {
+                    return `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
+                } else {
+                    codepoint -= 0x10000;
+                    let highSurrogate = 0xD800 + (codepoint >> 10);
+                    let lowSurrogate = 0xDC00 + (codepoint & 0x3FF);
+                    return `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
+                }
+            } else {
+                let result = '';
+                // Use a for...of loop or Array.from for correct iteration over Unicode characters
+                for (const char of str) { // This iterates over Unicode characters, handling surrogate pairs correctly
+                    let codepoint = char.codePointAt(0);
+                    if (codepoint <= 0xFFFF) {
+                        result += `\\u${codepoint.toString(16).padStart(4, '0').toUpperCase()}`;
+                    } else {
+                        codepoint -= 0x10000;
+                        let highSurrogate = 0xD800 + (codepoint >> 10);
+                        let lowSurrogate = 0xDC00 + (codepoint & 0x3FF);
+                        result += `\\u${highSurrogate.toString(16).toUpperCase()}\\u${lowSurrogate.toString(16).toUpperCase()}`;
+                    }
+                }
+                return result;
+            }
         }
 
         function convertString() {
